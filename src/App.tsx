@@ -136,20 +136,30 @@ function App() {
   // Autoplay direkt beim Laden
   useEffect(() => {
     if (audioRef.current) {
-      // Set initial volume
       audioRef.current.volume = volume;
       
-      // Versuche direkt abzuspielen
-      const playPromise = audioRef.current.play();
-
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          // Wenn Autoplay blockiert wird, zeigen wir einen "Play" Button
+      // Versuche das Audio zu laden und abzuspielen
+      const playAudio = async () => {
+        try {
+          await audioRef.current?.play();
+        } catch (err) {
+          console.log("Autoplay prevented:", err);
           setShowPlayButton(true);
-        });
-      }
+        }
+      };
+
+      // Warte bis die Audio-Datei geladen ist
+      audioRef.current.addEventListener('loadeddata', () => {
+        playAudio();
+      });
+
+      return () => {
+        if (audioRef.current) {
+          audioRef.current.removeEventListener('loadeddata', playAudio);
+        }
+      };
     }
-  }, []); // Leeres Dependencies Array für einmaliges Ausführen
+  }, []);
 
   // Optional: Zeige Play Button wenn Autoplay fehlschlägt
   const [showPlayButton, setShowPlayButton] = useState(false);
@@ -380,7 +390,7 @@ function App() {
                 className="w-64 h-64 mx-auto mb-2"
               >
                 <img 
-                  src="images/logo.png" 
+                  src="/logo.png"
                   alt="Nebula AI Logo" 
                   className="w-full h-full object-contain animate-float"
                 />
