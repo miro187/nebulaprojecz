@@ -136,26 +136,30 @@ function App() {
   // Autoplay direkt beim Laden
   useEffect(() => {
     if (audioRef.current) {
+      // Initial setup
       audioRef.current.volume = volume;
-      
-      // Versuche das Audio zu laden und abzuspielen
+      audioRef.current.muted = true; // Start muted
+
       const playAudio = async () => {
         try {
           await audioRef.current?.play();
+          // Unmute after successful play
+          setTimeout(() => {
+            if (audioRef.current) {
+              audioRef.current.muted = false;
+            }
+          }, 100);
         } catch (err) {
           console.log("Autoplay prevented:", err);
           setShowPlayButton(true);
         }
       };
 
-      // Warte bis die Audio-Datei geladen ist
-      audioRef.current.addEventListener('loadeddata', () => {
-        playAudio();
-      });
+      playAudio();
 
       return () => {
         if (audioRef.current) {
-          audioRef.current.removeEventListener('loadeddata', playAudio);
+          audioRef.current.pause();
         }
       };
     }
@@ -180,6 +184,7 @@ function App() {
         ref={audioRef}
         loop
         preload="auto"
+        muted
         className="hidden"
         src="/audio/space-ambient.mp3"
       />
