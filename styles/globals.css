@@ -1,0 +1,22 @@
+/* Add these animation styles */
+@keyframes rotateLogo {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.rotating-logo {
+  width: 48px; /* Angepasste Größe für das zentrale Logo */
+  height: 48px;
+  animation: rotateLogo 20s linear infinite;
+  transition: transform 0.3s ease-in-out;
+  /* Bläulicher Farbton wie im Original */
+  filter: brightness(0) saturate(100%) invert(48%) sepia(79%) saturate(2476%) hue-rotate(190deg) brightness(118%) contrast(119%);
+}
+
+.rotating-logo:hover {
+  animation-duration: 10s;
+} 
